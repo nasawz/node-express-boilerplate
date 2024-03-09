@@ -3,6 +3,7 @@ const app = require('./app');
 const config = require('./config/config');
 const logger = require('./config/logger');
 const { initDB } = require('./surrealdb');
+require('./scheduler')
 
 let server;
 server = app.listen(config.port, async () => {

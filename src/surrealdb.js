@@ -20,6 +20,7 @@ async function initDB() {
       },
     });
     await surrealDB.use({ namespace: ns, database: db });
+    await dbClient.use({ namespace: ns, database: db });
   } catch (err) {
     logger.error(err);
   }
