@@ -117,6 +117,19 @@ signin = async (email, password) => {
 };
 
 authenticate = async (token) => {
+
+  await dbClient.authenticate(token)
+  const result = await dbClient.query(`
+  SELECT * FROM $session;
+  SELECT * FROM $token;
+  SELECT * FROM $scope;
+  SELECT * FROM $auth;
+  `);
+  console.log(result);
+
+  const user = await dbClient.info();
+  console.log(user);
+
   return await dbClient.authenticate(token);
 };
 
