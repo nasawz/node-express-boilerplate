@@ -11,7 +11,26 @@ const createUser = async (userBody) => {
   if (await User.isEmailTaken(userBody.email)) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
   }
-  return User.create(userBody);
+  return User.signup(userBody);
+};
+
+/**
+ * signin User
+ * @param {*} email 
+ * @param {*} password 
+ * @returns 
+ */
+const signinUser = async (email, password) => {
+  return User.signin(email, password);
+};
+
+/**
+ * authenticateUser
+ * @param {*} token 
+ * @returns 
+ */
+const authenticateUser = async (token) => {
+  return User.authenticate(token);
 };
 
 // /**
@@ -80,7 +99,9 @@ const getUserById = async (id) => {
 
 module.exports = {
   createUser,
+  signinUser,
   // queryUsers,
+  authenticateUser,
   getUserById,
   // getUserByEmail,
   // updateUserById,
