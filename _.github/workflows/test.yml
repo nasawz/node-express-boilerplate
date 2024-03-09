@@ -1,0 +1,60 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  pull_request:
+
+permissions:
+  contents: read
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+  
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/node-pnpm-setup
+
+      - name: Setup MongoDB 
+        run: docker compose up -d mongodb
+
+      - name: Runs Tests
+        run: cp .env.example .env && npm run coverage
+
+      - name: Create Coverage Badge
+        if: github.ref == 'refs/heads/main'
+        run: npm i coverage-badges-cli -g && coverage-badges --output coverage/badge.svg
+
+      - name: Setup Pages
+        if: github.ref == 'refs/heads/main'
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './coverage'
+    
+  deploy-coverage:
+    if: github.ref == 'refs/heads/main'
+    needs: coverage
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
