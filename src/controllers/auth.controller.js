@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const { userService } = require('../services');
+const { userService, authService } = require('../services');
 const { jwtDecode } = require('jwt-decode');
 const ApiError = require('../utils/ApiError');
 // const { authService, userService, tokenService, emailService } = require('../services');
@@ -18,11 +18,12 @@ const register = catchAsync(async (req, res) => {
 });
 
 const login = catchAsync(async (req, res) => {
-  // const { email, password } = req.body;
-  // const user = await authService.loginUserWithEmailAndPassword(email, password);
-  // const tokens = await tokenService.generateAuthTokens(user);
-  // res.send({ user, tokens });
-  res.send({});
+  const { email, password } = req.body;
+  const token = await authService.loginUserWithEmailAndPassword(email, password);
+  var decoded = jwtDecode(token);
+  const { ID } = decoded;
+  const result = await userService.getUserById(ID);
+  res.send({ token, user: result[0][0] });
 });
 
 const logout = catchAsync(async (req, res) => {
@@ -63,6 +64,13 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const verifyToken = catchAsync(async (req, res) => {
+  const { token } = req.body;
+  await authService.verifyToken(token);
+  // res.status(httpStatus.NO_CONTENT).send();
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
 module.exports = {
   register,
   login,
@@ -72,4 +80,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
+  verifyToken,
 };

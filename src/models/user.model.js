@@ -97,7 +97,7 @@ isEmailTaken = async (email) => {
   return false;
 };
 
-create = async (data) => {
+signup = async (data) => {
   return await dbClient.signup({
     namespace: config.surreal.ns,
     database: config.surreal.db,
@@ -106,12 +106,28 @@ create = async (data) => {
   });
 };
 
+signin = async (email, password) => {
+  return await dbClient.signin({
+    namespace: config.surreal.ns,
+    database: config.surreal.db,
+    scope: 'user',
+    email: email,
+    password: password,
+  });
+};
+
+authenticate = async (token) => {
+  return await dbClient.authenticate(token);
+};
+
 findById = async (id) => {
   return await surrealDB.query(`SELECT * OMIT password FROM user WHERE id = $id`, { id });
 };
 
 module.exports = {
   isEmailTaken,
-  create,
+  signup,
+  signin,
+  authenticate,
   findById,
 };
