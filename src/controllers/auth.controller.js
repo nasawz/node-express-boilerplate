@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const { userService, authService } = require('../services');
+const { userService, authService, emailService } = require('../services');
 const { jwtDecode } = require('jwt-decode');
 const ApiError = require('../utils/ApiError');
 // const { authService, userService, tokenService, emailService } = require('../services');
@@ -52,16 +52,14 @@ const resetPassword = catchAsync(async (req, res) => {
 });
 
 const sendVerificationEmail = catchAsync(async (req, res) => {
-  // const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);
-  // await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
-  // res.status(httpStatus.NO_CONTENT).send();
+  const { email } = req.body;
+  await emailService.sendVerificationEmail(email);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
 const verifyEmail = catchAsync(async (req, res) => {
-  // await authService.verifyEmail(req.query.token);
-  // res.status(httpStatus.NO_CONTENT).send();
-  res.status(httpStatus.NO_CONTENT).send();
+  const verificationRes = await authService.verifyEmail(req.query.code);
+  res.status(httpStatus[200]).send({verificationRes});
 });
 
 const verifyToken = catchAsync(async (req, res) => {
