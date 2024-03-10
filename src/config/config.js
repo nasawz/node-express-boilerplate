@@ -37,6 +37,8 @@ if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
 
+console.log(envVars);
+
 module.exports = {
   env: envVars.NODE_ENV,
   logLevel: envVars.LOG_LEVEL,
