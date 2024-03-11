@@ -1,16 +1,30 @@
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 const config = require('../config/config');
 const logger = require('../config/logger');
 const { Code } = require('../models');
-console.log(config.email.smtp);
-const transport = nodemailer.createTransport(config.email.smtp);
-/* istanbul ignore next */
-if (config.env !== 'test') {
-  transport
-    .verify()
-    .then(() => logger.info('Connected to email server'))
-    .catch(() => logger.warn('Unable to connect to email server. Make sure you have configured the SMTP options in .env'));
-}
+const axios = require('axios');
+// console.log(config.email.smtp);
+// const transport = nodemailer.createTransport(config.email.smtp);
+// /* istanbul ignore next */
+// if (config.env !== 'test') {
+//   transport
+//     .verify()
+//     .then(() => logger.info('Connected to email server'))
+//     .catch(() => logger.warn('Unable to connect to email server. Make sure you have configured the SMTP options in .env'));
+// }
+
+const transport = {
+  sendMail: async (to, subject, html) => {
+    return axios.post(config.email.endpoint, {
+      key: config.email.key,
+      email: {
+        to,
+        subject,
+        html,
+      },
+    });
+  },
+};
 
 /**
  * Send an email
@@ -19,9 +33,9 @@ if (config.env !== 'test') {
  * @param {string} text
  * @returns {Promise}
  */
-const sendEmail = async (to, subject, text) => {
-  const msg = { from: config.email.from, to, subject, html: text };
-  await transport.sendMail(msg);
+const sendEmail = async (to, subject, html) => {
+  let res = await transport.sendMail(to, subject, html);
+  console.log(res);
 };
 
 /**
@@ -52,14 +66,14 @@ const sendVerificationEmail = (email) => {
     const subject = 'Email Verification';
 
     const replacedTemplate = mailTemplete
-    .replace(/\[\[NAME\]\]/g, 'Linear')
-    .replace(/\[\[LOGO\]\]/g, 'https://xiangshikeji.com/img/logo.svg')
-    .replace(/\[\[SITE\]\]/g, 'https://linear.app')
-    .replace(/\[\[TARGET\]\]/g, 'https://linear.app')
-    .replace(/\[\[CODE\]\]/g, code)
-    .replace(/\[\[COLOR\]\]/g, '#5e6ad2');
+      .replace(/\[\[NAME\]\]/g, 'Linear')
+      .replace(/\[\[LOGO\]\]/g, 'https://xiangshikeji.com/img/logo.svg')
+      .replace(/\[\[SITE\]\]/g, 'https://linear.app')
+      .replace(/\[\[TARGET\]\]/g, 'https://linear.app')
+      .replace(/\[\[CODE\]\]/g, code)
+      .replace(/\[\[COLOR\]\]/g, '#5e6ad2');
 
-    console.log(replacedTemplate);
+    // console.log(replacedTemplate);
 
     await sendEmail(email, subject, replacedTemplate);
 
