@@ -4,7 +4,7 @@
   "private": true,
   "main": "src/index.js",
   "repository": "https://github.com/MarcosMorelli/node-express-boilerplate.git",
-  "author": "Marcos Morelli",
+  "author": "nasawz",
   "license": "MIT",
   "scripts": {
     "start": "node src/index.js",
@@ -50,8 +50,8 @@
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
-    "mongoose": "^8.2.1",
     "morgan": "^1.10.0",
+    "openai": "^4.28.4",
     "passport": "^0.7.0",
     "passport-http-bearer": "^1.0.1",
     "passport-jwt": "^4.0.1",

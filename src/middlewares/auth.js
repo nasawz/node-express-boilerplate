@@ -6,7 +6,7 @@ const userRights = roleRights.get('admin');
 
 const verifyCallback = (req, resolve, reject, requiredRights) => async (err, user, info) => {
   if (err || !user) {
-    return reject(new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate'));
+    return reject(new ApiError(httpStatus.UNAUTHORIZED, '请登录后使用！'));
   }
   req.user = user;
 

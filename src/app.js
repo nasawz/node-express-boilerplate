@@ -13,10 +13,20 @@ const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const { userService } = require('./services');
 const { jwtDecode } = require('jwt-decode');
+const http = require('http');
+
+// const { Server } = require('socket.io');
 
 var Strategy = require('passport-http-bearer').Strategy;
 
 const app = express();
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//   cors: {
+//     origin: '*',
+//     methods: ['GET', 'POST'],
+//   },
+// });
 
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
@@ -32,9 +42,6 @@ app.use(express.json());
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 
-// sanitize request data
-// app.use(mongoSanitize());
-
 // gzip compression
 app.use(compression());
 
@@ -42,22 +49,22 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors());
 
-
 // Bearer Tokens
-passport.use(new Strategy(
-  async function(token, done) {
-    let isAuth = await userService.authenticateUser(token)
-    if(isAuth){
+passport.use(
+  new Strategy(async function (token, done) {
+    try {
+      await userService.authenticateUser(token);
       var decoded = jwtDecode(token);
       const { ID } = decoded;
       const result = await userService.getUserById(ID);
       const user = result[0][0];
-      return done(null, user, { scope: user.authority });      
-    }else{
+      return done(null, user, { scope: user.authority });
+    } catch (error) {
+      console.log('-----------------');
       return done(null, false);
     }
-  }
-));
+  }),
+);
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
@@ -80,5 +87,5 @@ app.use(errorConverter);
 
 // handle error
 app.use(errorHandler);
-
-module.exports = app;
+// module.exports = { app, io };
+module.exports = { app };

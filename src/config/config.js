@@ -29,6 +29,7 @@ const envVarsSchema = Joi.object()
     // SMTP_PASSWORD: Joi.string().description('password for email server'),
     EMAIL_SECRET_KEY: Joi.string().description('the from field in the emails sent by the app'),
     EMAIL_ENDPOINT: Joi.string().description('the from field in the emails sent by the app'),
+    AI_API_KEY: Joi.string().description('AI api secret key'),
   })
   .unknown();
 
@@ -42,6 +43,7 @@ module.exports = {
   env: envVars.NODE_ENV,
   logLevel: envVars.LOG_LEVEL,
   port: envVars.PORT,
+  aiApiKey: envVars.AI_API_KEY,
   surreal: {
     url: envVars.SURREALDB_URL,
     ns: envVars.SURREALDB_NS,

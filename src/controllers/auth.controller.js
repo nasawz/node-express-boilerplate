@@ -6,21 +6,18 @@ const ApiError = require('../utils/ApiError');
 // const { authService, userService, tokenService, emailService } = require('../services');
 
 const register = catchAsync(async (req, res) => {
-  try {
-    const token = await userService.createUser(req.body);
-    var decoded = jwtDecode(token);
-    const { ID } = decoded;
-    const result = await userService.getUserById(ID);
-    res.status(httpStatus.CREATED).send({ token, user: result[0][0] });
-  } catch (error) {
-    throw new ApiError(httpStatus.BAD_REQUEST, '服务器错误');
-  }
+  const token = await userService.createUser(req.body);
+  var decoded = jwtDecode(token);
+  const { ID } = decoded;
+  const result = await userService.getUserById(ID);
+  res.status(httpStatus.CREATED).send({ token, user: result[0][0] });
 });
 
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const token = await authService.loginUserWithEmailAndPassword(email, password);
   var decoded = jwtDecode(token);
+  console.log(decoded);
   const { ID } = decoded;
   const result = await userService.getUserById(ID);
   res.send({ token, user: result[0][0] });
@@ -59,7 +56,7 @@ const sendVerificationEmail = catchAsync(async (req, res) => {
 
 const verifyEmail = catchAsync(async (req, res) => {
   const verificationRes = await authService.verifyEmail(req.query.code);
-  res.status(httpStatus[200]).send({verificationRes});
+  res.status(httpStatus[200]).send({ verificationRes });
 });
 
 const verifyToken = catchAsync(async (req, res) => {

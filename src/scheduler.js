@@ -7,5 +7,5 @@ const job = new CronJob(
   }, // onTick
   null, // onComplete
   true, // start
-  'Asia/Shanghai', 
+  'Asia/Shanghai',
 );
