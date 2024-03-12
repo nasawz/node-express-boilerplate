@@ -29,7 +29,7 @@ const chatCompletions = async (data, user) => {
             userId: userId,
           };
           Fee.createRecord(feeData);
-          User.costPoint(userId, total_tokens);
+          User.costPoint(userId);
           resolve(response.data);
         }
       })
