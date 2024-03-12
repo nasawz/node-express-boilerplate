@@ -40,21 +40,27 @@ cp .env.example .env
 
 ## Table of Contents
 
-- [Features](#features)
-- [Commands](#commands)
-- [Environment Variables](#environment-variables)
-- [Project Structure](#project-structure)
-- [API Documentation](#api-documentation)
-- [Error Handling](#error-handling)
-- [Validation](#validation)
-- [Authentication](#authentication)
-- [Authorization](#authorization)
-- [Health Check](#health-check)
-- [Logging](#logging)
-- [Custom Mongoose Plugins](#custom-mongoose-plugins)
-- [Linting](#linting)
-- [Automatic Dependencies Update](#automatic-dependencies-update)
-- [Contributing](#contributing)
+- [RESTful API Node Server Boilerplate](#restful-api-node-server-boilerplate)
+  - [Live Demo](#live-demo)
+  - [Manual Installation](#manual-installation)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Commands](#commands)
+  - [Environment Variables](#environment-variables)
+  - [Project Structure](#project-structure)
+  - [API Documentation](#api-documentation)
+    - [API Endpoints](#api-endpoints)
+  - [Error Handling](#error-handling)
+  - [Validation](#validation)
+  - [Authentication](#authentication)
+  - [Authorization](#authorization)
+  - [Health Check](#health-check)
+  - [Logging](#logging)
+    - [toJSON](#tojson)
+    - [paginate](#paginate)
+  - [Linting](#linting)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Features
 
@@ -367,26 +373,6 @@ This app uses pm2 in production mode, which is already configured to store the l
 
 Note: API request information (request url, response code, timestamp, etc.) are also automatically logged (using [morgan](https://github.com/expressjs/morgan)).
 
-## Custom Mongoose Plugins
-
-The app also contains 2 custom mongoose plugins that you can attach to any mongoose model schema. You can find the plugins in `src/models/plugins`.
-
-```javascript
-const mongoose = require('mongoose');
-const { toJSON, paginate } = require('./plugins');
-
-const userSchema = mongoose.Schema(
-  {
-    /* schema definition here */
-  },
-  { timestamps: true }
-);
-
-userSchema.plugin(toJSON);
-userSchema.plugin(paginate);
-
-const User = mongoose.model('User', userSchema);
-```
 
 ### toJSON
 

@@ -1,4 +1,3 @@
-// const { Healthcheck } = require('../models');
 
 /**
  * Check if connection with db is good
