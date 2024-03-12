@@ -124,10 +124,15 @@ findById = async (id) => {
   return await surrealDB.query(`SELECT * OMIT password FROM user WHERE id = $id`, { id });
 };
 
+costPoint = async (userId, total_tokens) => {
+  return await surrealDB.query(`UPDATE $user SET point -= $total_tokens RETURN NONE;`, { user: userId, total_tokens });
+};
+
 module.exports = {
   isEmailTaken,
   signup,
   signin,
   authenticate,
   findById,
+  costPoint,
 };

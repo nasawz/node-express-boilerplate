@@ -6,8 +6,9 @@ const { io } = require('../app');
 const { aiService } = require('../services');
 
 const createMessage = catchAsync(async (req, res) => {
-  let aiRes = await aiService.chatCompletions(req.body);
+  let aiRes = await aiService.chatCompletions(req.body,req.user);
   console.log(aiRes);
+  let { id, object, created, model, usage } = aiRes;
   res.send(aiRes);
 });
 

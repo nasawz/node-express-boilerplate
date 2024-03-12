@@ -12,4 +12,10 @@ DEFINE TABLE code SCHEMALESS
 		FOR select,create,update,delete NONE
 ;
 
+DEFINE TABLE fee SCHEMALESS
+	PERMISSIONS
+		FOR select,create,update,delete NONE
+;
+
+
 ```
