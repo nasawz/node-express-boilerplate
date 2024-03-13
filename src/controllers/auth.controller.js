@@ -49,14 +49,18 @@ const resetPassword = catchAsync(async (req, res) => {
 });
 
 const sendVerificationEmail = catchAsync(async (req, res) => {
-  const { email } = req.body;
-  await emailService.sendVerificationEmail(email);
-  res.status(httpStatus.NO_CONTENT).send();
+  const { email } = req.user;
+  try {
+    await emailService.sendVerificationEmail(email);
+    res.status(httpStatus.NO_CONTENT).send();
+  } catch (error) {
+    throw new ApiError(httpStatus.BAD_REQUEST, error);
+  }
 });
 
 const verifyEmail = catchAsync(async (req, res) => {
-  const verificationRes = await authService.verifyEmail(req.query.code);
-  res.status(httpStatus[200]).send({ verificationRes });
+  await authService.verifyEmail(req.query.code);
+  res.status(httpStatus.NO_CONTENT).send();
 });
 
 const verifyToken = catchAsync(async (req, res) => {

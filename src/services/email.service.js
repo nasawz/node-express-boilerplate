@@ -2,7 +2,8 @@ const config = require('../config/config');
 const logger = require('../config/logger');
 const { Code } = require('../models');
 const axios = require('axios');
-
+const ApiError = require('../utils/ApiError');
+const httpStatus = require('http-status');
 // https://github.com/nasawz/email
 
 const transport = {
@@ -54,23 +55,24 @@ If you did not request any password resets, then ignore this email.`;
  */
 const sendVerificationEmail = (email) => {
   return new Promise(async (resolve, reject) => {
-    const code = await Code.createCode4Email(email);
-    const subject = 'Email Verification';
-
-    const replacedTemplate = mailTemplete
-      .replace(/\[\[NAME\]\]/g, 'Linear')
-      .replace(/\[\[LOGO\]\]/g, 'https://xiangshikeji.com/img/logo.svg')
-      .replace(/\[\[SITE\]\]/g, 'https://linear.app')
-      .replace(/\[\[TARGET\]\]/g, 'https://linear.app')
-      .replace(/\[\[CODE\]\]/g, code)
-      .replace(/\[\[COLOR\]\]/g, '#5e6ad2');
-
-    // console.log(replacedTemplate);
-
-    await sendEmail(email, subject, replacedTemplate);
-
-    logger.info(`Verification email sent to ${email}  code is ${code}`);
-    resolve();
+    try {
+      console.log('--------------[SUYO] 邮箱确认');
+      const code = await Code.createCode4Email(email);
+      const subject = '[SUYO] 邮箱确认';
+      const replacedTemplate = mailTemplete
+        .replace(/\[\[NAME\]\]/g, 'SUYO')
+        // .replace(/\[\[LOGO\]\]/g, 'https://xiangshikeji.com/img/logo.svg')
+        .replace(/\[\[SITE\]\]/g, 'https://suyo.app')
+        .replace(/\[\[TARGET\]\]/g, 'https://suyo.app')
+        .replace(/\[\[CODE\]\]/g, code)
+        .replace(/\[\[COLOR\]\]/g, '#5e6ad2');
+      // console.log(replacedTemplate);
+      // await sendEmail(email, subject, replacedTemplate);
+      logger.info(`Verification email sent to ${email}  code is ${code}`);
+      resolve();
+    } catch (error) {
+      reject(error)
+    }
   });
 };
 

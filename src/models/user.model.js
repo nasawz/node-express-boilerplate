@@ -128,6 +128,13 @@ costPoint = async (userId) => {
   return await surrealDB.query(`UPDATE $user SET point -= 1 RETURN NONE;`, { user: userId });
 };
 
+addPoint = async (email, point) => {
+  return await surrealDB.query(`UPDATE user SET point += $point WHERE email = $email RETURN NONE;`, {
+    email: email,
+    point: point,
+  });
+};
+
 module.exports = {
   isEmailTaken,
   signup,
@@ -135,4 +142,5 @@ module.exports = {
   authenticate,
   findById,
   costPoint,
+  addPoint,
 };

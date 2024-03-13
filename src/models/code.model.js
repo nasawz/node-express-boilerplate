@@ -13,14 +13,23 @@ const generateLicenseKey = (length, pairs = 4) => {
 
 createCode4Email = (email) => {
   return new Promise(async (resolve, reject) => {
-    const code = generateLicenseKey(10, 5);
-    await surrealDB.create('code', {
-      email,
-      code,
-      createdAt: new Date().getTime(),
-      expiredAt: new Date(Date.now() + 5 * 60 * 1000),
+    const code = generateLicenseKey(8, 4);
+
+    const result = await surrealDB.query('SELECT count() FROM code WHERE email = $email And expiredAt > time::now() GROUP BY count;', {
+      email: email,
     });
-    resolve(code);
+    console.log(result);
+    if(result[0][0]?.count>1){
+      reject('请稍后重试')
+    }else{
+      await surrealDB.create('code', {
+        email,
+        code,
+        createdAt: new Date().getTime(),
+        expiredAt: new Date(Date.now() + 5 * 60 * 1000),
+      });
+      resolve(code);
+    }
   });
 };
 
@@ -30,10 +39,13 @@ chkCode4Email = (code) => {
       code: code,
     });
     if (result[0].length > 0) {
-      await surrealDB.query(`UPDATE user SET isEmailValid = true WHERE email = $email`, { email: result[0][0].email });
-      resolve(true);
+     let upRes =  await surrealDB.query(`UPDATE user SET isEmailValid = true WHERE email = $email And isEmailValid = false`, { email: result[0][0].email });
+     if(upRes[0].length>0){
+      resolve(result[0][0].email);
+     }
+     reject(false);
     }else{
-      resolve(false);
+      reject(false);
     }
   });
 };

@@ -1,3 +1,6 @@
+https://surrealdb.com/docs/surrealdb/surrealql/statements/select
+
+
 ```
 DEFINE SCOPE user SESSION 1d 
     SIGNUP (CREATE user SET authority = ['USER'], email = $email, password = crypto::argon2::generate($password), name = 'Guest', avatar = '', type = 'Guest', expired = 0, created = time::now(), lastSignin = time::now(), isEmailValid = false, point = 5) 

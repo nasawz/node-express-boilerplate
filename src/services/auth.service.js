@@ -3,7 +3,7 @@ const httpStatus = require('http-status');
 const userService = require('./user.service');
 // const Token = require('../models/token.model');
 const ApiError = require('../utils/ApiError');
-const { Code } = require('../models');
+const { Code, User } = require('../models');
 // const { tokenTypes } = require('../config/tokens');
 
 /**
@@ -17,7 +17,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
     const token = await userService.signinUser(email, password);
     return token;
   } catch (error) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
+    throw new ApiError(httpStatus.UNAUTHORIZED, '用户名或密码错误');
   }
 };
 
@@ -82,20 +82,24 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
  * @returns {Promise}
  */
 const verifyEmail = async (code) => {
-  return await Code.chkCode4Email(code)
+  try {
+    const email = await Code.chkCode4Email(code);
+    await User.addPoint(email, 20);
+  } catch (error) {
+    throw new ApiError(httpStatus.BAD_REQUEST, '无效的认证码');
+  }
 };
 
 /**
  * verify Token
- * @param {*} token 
+ * @param {*} token
  */
 const verifyToken = async (token) => {
-  const res = await userService.authenticateUser(token)
-console.log('=============',res);
+  const res = await userService.authenticateUser(token);
+  console.log('=============', res);
 
   return res;
 };
-
 
 module.exports = {
   loginUserWithEmailAndPassword,
