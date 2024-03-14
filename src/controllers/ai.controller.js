@@ -7,9 +7,9 @@ const { aiService } = require('../services');
 
 const createMessage = catchAsync(async (req, res) => {
   let aiRes = await aiService.chatCompletions(req.body,req.user);
-  console.log(aiRes);
-  let { id, object, created, model, usage } = aiRes;
-  res.send(aiRes);
+  // console.log(aiRes);
+  let { id, object, created, model, usage,...others } = aiRes;
+  res.send({...others});
 });
 
 module.exports = {
