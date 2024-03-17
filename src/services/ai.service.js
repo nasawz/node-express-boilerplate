@@ -8,6 +8,7 @@ const chatCompletions = async (data, user) => {
   return new Promise((resolve, reject) => {
     const userId = user.id;
     axios({
+      timeout: 5000, // Set a timeout of 5 seconds
       method: 'post',
       url: '/v1/chat/completions',
       baseURL: 'https://api.moonshot.cn',
@@ -15,6 +16,7 @@ const chatCompletions = async (data, user) => {
         authorization: `Bearer ${config.aiApiKey}`,
       },
       data: data,
+      
     })
       .then(function (response) {
         if (response.data.choices.length > 0) {
